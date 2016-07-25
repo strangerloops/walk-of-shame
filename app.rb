@@ -3,6 +3,7 @@ require 'open-uri'
 require 'csv'
 require 'net/http'
 require 'json'
+require 'rufus-scheduler'
 require_relative 'directions.rb'
 
 class Shame < Sinatra::Base
