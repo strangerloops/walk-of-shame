@@ -1,5 +1,9 @@
 $(function(){
 
+  $("input[placeholder]").each(function () {
+    $(this).attr('size', $(this).attr('placeholder').length);
+  });
+
   map = L.map('map');
 
   $(".leaflet-control-zoom").css("visibility", "hidden");
