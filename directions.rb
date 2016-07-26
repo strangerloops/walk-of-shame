@@ -1,7 +1,7 @@
 def directions_to address
 
   csv_url = 'https://data.ny.gov/api/views/axi5-gnss/rows.csv?accessType=DOWNLOAD'
-  mapzen_key = 'valhalla-ScXGhpE'
+  mapzen_key = 'valhalla-auPYMMh'
   finish = geocode address
 
   bar_locations = CSV.new(open(csv_url), :headers => :first_row).map do |row|
@@ -23,7 +23,7 @@ def directions_to address
 end
 
 def geocode address
-  search_key = 'search-xSMLVr7'
+  search_key = 'search-BRxMWr7'
   base = "https://search.mapzen.com/v1/search?api_key=#{search_key}&text=#{address}"
   response = Net::HTTP.get(URI.parse(base))
   coords = JSON.parse(response)['features'].first['geometry']['coordinates'].reverse
