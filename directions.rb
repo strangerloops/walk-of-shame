@@ -1,4 +1,4 @@
-def directions_to address, borough
+def directions_to address
 
   csv_url = 'https://data.ny.gov/api/views/axi5-gnss/rows.csv?accessType=DOWNLOAD'
   mapzen_key = 'valhalla-ScXGhpE'
