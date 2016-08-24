@@ -1,40 +1,98 @@
+var the_map;
+
 $(function(){
 
   $("input[placeholder]").each(function () {
     $(this).attr('size', $(this).attr('placeholder').length);
   });
 
-  map = L.map('map');
+  the_map = L.map('map');
 
   $(".leaflet-control-zoom").css("visibility", "hidden");
 
   var layer = Tangram.leafletLayer({
     attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/" target="_blank">Mapzen</a>'
   });
+  layer.addTo(the_map);
 
-  layer.addTo(map);
+  the_map.setView([40.693817467738924, -73.92976999282837], 11);
 
-  map.setView([40.693817467738924, -73.92976999282837], 11);
+  var bar_urls = {
+    manhattan: 'https://data.ny.gov/api/views/avba-r49v/rows.csv?accessType=DOWNLOAD',
+    bronx: 'https://data.ny.gov/api/views/njae-48a5/rows.csv?accessType=DOWNLOAD',
+    brooklyn: 'https://data.ny.gov/api/views/ufbc-kndb/rows.csv?accessType=DOWNLOAD',
+    queens: 'https://data.ny.gov/api/views/nz46-medg/rows.csv?accessType=DOWNLOAD',
+    staten_island: "https://data.ny.gov/api/views/s3h7-cmgk/rows.csv?accessType=DOWNLOAD"
+  };
 
   $("#submit").click(function(){
-    var base = "/directions?";
-    var params = "address=" + $("#address").val();
-    var request = $.getJSON(base + params);
-    $.when(request).done(function(response){
-      response.forEach(function(polyline){
-        var pointList = L.PolylineUtil.decode(polyline).map(function(point){
-          return point.map(function(coordinate){
-            return coordinate / 10;
+
+    var borough = $("#borough-input").val();
+
+    if (!borough){
+      $("#pick-one").show();
+      return;
+    } else {
+      
+    }
+
+    var address = $("#address-input").val();
+    var bars_url = bar_urls[borough];
+
+    var search_key = 'search-BRxMWr7';
+    var search_url = "https://search.mapzen.com/v1/search?api_key=" + search_key + "&text="+ address;
+
+    $.get(search_url, function(response){
+      
+      var geocoded = response.features[0].geometry.coordinates.reverse();
+      $.get('boroughs.geojson', function(boroughs) {
+        
+        var features = JSON.parse(boroughs).features;
+        $.get(bars_url, function(bars){
+          
+          var split_bars = bars.split("\n");
+          split_bars.shift();
+          var points = split_bars.map(function(bar){  
+            console.log(bar.split(','));
+            var latitude  = bar.split(',')[4];
+            var longitude = bar.split(',')[5];
+            return turf.point([longitude, latitude]);
           });
+
+          (function sleepyLoop (i) {          
+            setTimeout(function () {
+              drawDirections(points[i], geocoded);
+              if (--i) { sleepyLoop(i); }
+            }, 550);
+          })(points.length - 1);
         });
-        L.polyline(pointList, {
-          color: 'white',
-          weight: 3,
-          opacity: 0.2,
-          smoothFactor: 1
-        }).addTo(map);
       });
-      $(".leaflet-control-zoom").css("visibility", "visible");
     });
   });
 });
+
+function drawDirections(point, geocoded){
+  var request = "/directions?origin=" + JSON.stringify([point.geometry.coordinates[1], point.geometry.coordinates[0]]) + "&destination=" + JSON.stringify([geocoded[0], geocoded[1]]);
+  $.get(request, function(response){
+    if(response.length > 2){
+      drawPolyline(JSON.parse(JSON.parse(response)));
+      $(".leaflet-control-zoom").css("visibility", "visible");
+    }
+  });
+}
+
+function drawPolyline(decoded){
+  var polyline = L.polyline(decoded, {
+    color: 'white',
+    weight: 3,
+    opacity: 0.2,
+    smoothFactor: 1
+  });
+  polyline.addTo(the_map);
+}
+
+function decode(encoded){
+  return polyline.decode(encoded).map(function(coordinates){
+    return [coordinates[1] / 10, coordinates[0] / 10];
+  });
+}

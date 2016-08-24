@@ -9,10 +9,27 @@
     <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="Polyline.encoded.js"></script>
     <script src="scripts.js"></script>
+    <script src="turf.min.js" charset="utf-8"></script>
+    <script src="polyline.js" charset="utf-8"></script>
   </head>
   <body>
-    <div class="input">
-      <input type="text" id="address" placeholder="your address (e.g. 123 main st brooklyn ny)">
+    <div id="input">
+      <div id="borough-picker">
+        <select class="form-control" id="borough-input">
+          <option value="" selected disabled>get directions from bars in...</option>
+          <option value="manhattan">manhattan</option>
+          <option value="bronx">bronx</option>
+          <option value="brooklyn">brooklyn</option>
+          <option value="queens">queens</option>
+          <option value="staten_island">staten island</option>
+          <option value="nyc">all nyc</option>
+        </select>
+        <label id="pick-one" hidden>pick one of these god damn it</label>
+      </div>
+      <div id="address-field">
+        <label>to...</label>
+        <input type="text" id="address-input" placeholder="your address (e.g. 123 main st brooklyn ny)">
+      </div>
       <button id="submit">go</button>
     </div>
     <div id="map"></div>
