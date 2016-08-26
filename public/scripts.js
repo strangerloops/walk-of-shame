@@ -32,8 +32,6 @@ $(function(){
     if (!borough){
       $("#pick-one").show();
       return;
-    } else {
-      
     }
 
     var address = $("#address-input").val();
@@ -48,9 +46,11 @@ $(function(){
       $.get('boroughs.geojson', function(boroughs) {
         
         var features = JSON.parse(boroughs).features;
+        var label = $("#counter-label");
         $.get(bars_url, function(bars){
           
           var split_bars = bars.split("\n");
+          var total = split_bars.length;
           split_bars.shift();
           var points = split_bars.map(function(bar){  
             console.log(bar.split(','));
@@ -60,9 +60,12 @@ $(function(){
           });
 
           (function sleepyLoop (i) {          
-            setTimeout(function () {
+            setTimeout(function(){
               drawDirections(points[i], geocoded);
-              if (--i) { sleepyLoop(i); }
+              if (--i) {
+                label.val((total - i) + '/' + total);
+                sleepyLoop(i);
+              }
             }, 550);
           })(points.length - 1);
         });
