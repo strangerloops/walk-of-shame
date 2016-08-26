@@ -8,4 +8,9 @@
 * {
   background-color: black;
   color: white;
+  font-family: Inconsolata;
+}
+
+#counter-label {
+  z-index: 2;
 }

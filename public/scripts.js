@@ -52,6 +52,8 @@ $(function(){
           var split_bars = bars.split("\n");
           var total = split_bars.length;
           split_bars.shift();
+          $("#input").hide();
+          $("#header").hide();
           var points = split_bars.map(function(bar){  
             console.log(bar.split(','));
             var latitude  = bar.split(',')[4];
@@ -63,7 +65,7 @@ $(function(){
             setTimeout(function(){
               drawDirections(points[i], geocoded);
               if (--i) {
-                label.val((total - i) + '/' + total);
+                label.text((total - i) + ' / ' + total);
                 sleepyLoop(i);
               }
             }, 550);
