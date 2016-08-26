@@ -15,7 +15,6 @@ def directions_to start, finish
       [coordinates[0] / 10.0, coordinates[1] / 10.0]
     end.to_json
   rescue
-    binding.pry
     ''
   end
 end
