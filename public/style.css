@@ -6,6 +6,7 @@
 }
 
 * {
+  padding-left: 10px;
   background-color: black;
   color: white;
   font-family: Inconsolata;

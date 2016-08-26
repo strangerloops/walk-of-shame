@@ -54,6 +54,7 @@ $(function(){
           split_bars.shift();
           $("#input").hide();
           $("#header").hide();
+          $("#twitter").hide();
           var points = split_bars.map(function(bar){  
             console.log(bar.split(','));
             var latitude  = bar.split(',')[4];
