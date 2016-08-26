@@ -6,6 +6,10 @@ $(function(){
     $(this).attr('size', $(this).attr('placeholder').length);
   });
 
+  $("#address-input").focus(function(){
+    $("#reminder").show();
+  });
+
   the_map = L.map('map');
 
   $(".leaflet-control-zoom").css("visibility", "hidden");
@@ -43,42 +47,38 @@ $(function(){
     $.get(search_url, function(response){
       
       var geocoded = response.features[0].geometry.coordinates.reverse();
-      $.get('boroughs.geojson', function(boroughs) {
-        
-        var features = JSON.parse(boroughs).features;
-        var label = $("#counter-label");
-        $.get(bars_url, function(bars){
-          
-          var split_bars = bars.split("\n");
-          var total = split_bars.length;
-          split_bars.shift();
-          $("#input").hide();
-          $("#header").hide();
-          $("#twitter").hide();
-          var points = split_bars.map(function(bar){  
-            console.log(bar.split(','));
-            var latitude  = bar.split(',')[4];
-            var longitude = bar.split(',')[5];
-            return turf.point([longitude, latitude]);
-          });
+      var label = $("#counter-label");
 
-          (function sleepyLoop (i) {          
-            setTimeout(function(){
-              drawDirections(points[i], geocoded);
-              if (--i) {
-                label.text((total - i) + ' / ' + total);
-                sleepyLoop(i);
-              }
-            }, 550);
-          })(points.length - 1);
+      $.get(bars_url, function(bars){
+        
+        var split_bars = bars.split("\n");
+        var total = split_bars.length;
+        split_bars.shift();
+        $("#input").hide();
+        $("#header").hide();
+        $("#twitter").hide();
+        var points = split_bars.map(function(bar){  
+          var latitude  = bar.split(',')[4];
+          var longitude = bar.split(',')[5];
+          return [longitude, latitude];
         });
-      });
+
+        (function sleepyLoop (i) {          
+          setTimeout(function(){
+            drawDirections(points[i], geocoded);
+            if (--i) {
+              label.text((total - i) + ' / ' + total);
+              sleepyLoop(i);
+            }
+          }, 550);
+        })(points.length - 1);
+      });   
     });
   });
 });
 
 function drawDirections(point, geocoded){
-  var request = "/directions?origin=" + JSON.stringify([point.geometry.coordinates[1], point.geometry.coordinates[0]]) + "&destination=" + JSON.stringify([geocoded[0], geocoded[1]]);
+  var request = "/directions?origin=" + JSON.stringify([point[1], point[0]]) + "&destination=" + JSON.stringify([geocoded[0], geocoded[1]]);
   $.get(request, function(response){
     if(response.length > 2){
       drawPolyline(JSON.parse(JSON.parse(response)));

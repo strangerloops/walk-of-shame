@@ -10,7 +10,6 @@
     <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="Polyline.encoded.js"></script>
     <script src="scripts.js"></script>
-    <script src="turf.min.js" charset="utf-8"></script>
     <script src="polyline.js" charset="utf-8"></script>
   </head>
   <body>
@@ -32,6 +31,7 @@
       <div id="address-field">
         <label>to...</label>
         <input type="text" id="address-input" placeholder="your address (e.g. 123 main st brooklyn ny)">
+        <label id="reminder" hidden>  <--- remember to include borough in the address</label>
       </div>
       <br>
       <button id="submit">go</button>

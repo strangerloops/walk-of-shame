@@ -1,3 +1,3 @@
-# mapping_demo
+# walk of shame
 
-quick start for mapping some data
+`ruby app.rb`
